@@ -42,7 +42,7 @@ export default function Home({ params }: any) {
 		city: "",
 		zip: "",
 		boatplaceUsage: [],
-		isAdmin: "",
+		isAdmin: false,
 	});
 	const [initializing, setInitializing] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -54,7 +54,9 @@ export default function Home({ params }: any) {
 	const [city, setCity] = useState("");
 	const [zip, setZip] = useState("");
 	const [boatplaceUsage, setBoatplaceUsage] = useState<any>();
-	const [isAdmin, setIsAdmin] = useState<any>();
+	const [isAdmin, setIsAdmin] = useState<boolean>();
+	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] =
+		useState<boolean>(false);
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -62,8 +64,10 @@ export default function Home({ params }: any) {
 				setUser(user);
 				get(ref(db, `userData/${user.uid}`)).then((snapshop) => {
 					const data = snapshop.val();
-					if (data.isAdmin == "false") {
+					if (data?.isAdmin === false) {
 						return router.push("/");
+					} else {
+						setIsLoggedInUserAdmin(true);
 					}
 				});
 				get(ref(db, `userData/${params.userId}`))
@@ -97,8 +101,8 @@ export default function Home({ params }: any) {
 		<Loading />
 	) : (
 		<main className="max-w-screen min-h-screen bg-[var(--secondary)] flex flex-col">
-			<Navbar user={user} />
-			<div className="w-full pl-96 pr-96 pt-16 flex items-center flex-col gap-2 mb-20">
+			<Navbar user={user} isAdmin={isLoggedInUserAdmin} />
+			<div className="w-full pt-16 flex items-center flex-col gap-2 mb-20">
 				<div className="w-2/4 flex gap-5">
 					<BackArrow />
 					<h1 className="text-2xl mb-5">
@@ -200,13 +204,15 @@ export default function Home({ params }: any) {
 					</p>
 					<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
 						<FontAwesomeIcon icon={faShield} size="lg" />
+						<p className="w-3/5">Administrator bruker?</p>
 						<input
-							className="bg-transparent w-full focus:outline-none"
-							maxLength={5}
-							placeholder="Er brukeren en administrator? (true/false)"
-							defaultValue={userData.isAdmin}
-							disabled={loading}
-							onChange={(e) => setIsAdmin(e.target.value)}
+							className="bg-transparent w-8 h-8 focus:outline-none"
+							type="checkbox"
+							defaultChecked={userData.isAdmin}
+							disabled={loading || !editMode}
+							onChange={(e) => {
+								setIsAdmin(e.target.checked);
+							}}
 						></input>
 					</div>
 				</div>
@@ -279,7 +285,7 @@ export default function Home({ params }: any) {
 										);
 									}
 								}
-								if (isAdmin !== "true" && isAdmin !== "false") {
+								if (isAdmin !== true && isAdmin !== false) {
 									setLoading(false);
 									return toast.error(
 										"Er brukeren en administrator? (true/false)",

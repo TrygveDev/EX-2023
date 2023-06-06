@@ -9,7 +9,11 @@ import Navbar from "../../components/Navbar";
 
 import { get, ref } from "firebase/database";
 import { toast } from "react-hot-toast";
-import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+	faAngleRight,
+	faShield,
+	faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import BackArrow from "@/app/components/BackArrow";
@@ -19,6 +23,8 @@ export default function Home() {
 	const [user, setUser] = useState<User>();
 	const [userData, setUserData] = useState();
 	const [initializing, setInitializing] = useState(true);
+	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] =
+		useState<boolean>(false);
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -26,8 +32,10 @@ export default function Home() {
 				setUser(user);
 				get(ref(db, `userData/${user.uid}`)).then((snapshop) => {
 					const data = snapshop.val();
-					if (data.isAdmin == "false") {
+					if (data?.isAdmin === false) {
 						return router.push("/");
+					} else {
+						setIsLoggedInUserAdmin(true);
 					}
 				});
 				get(ref(db, `userData`))
@@ -53,8 +61,8 @@ export default function Home() {
 		<Loading />
 	) : (
 		<main className="max-w-screen min-h-screen bg-[var(--secondary)] flex flex-col">
-			<Navbar user={user} />
-			<div className="w-full pl-96 pr-96 pt-16 flex items-center flex-col gap-2">
+			<Navbar user={user} isAdmin={isLoggedInUserAdmin} />
+			<div className="w-full pt-16 flex items-center flex-col gap-2 mb-20">
 				<div className="w-2/4 flex gap-5">
 					<BackArrow />
 					<h1 className="text-2xl mb-5">Endre eksiterende brukere</h1>
@@ -67,9 +75,17 @@ export default function Home() {
 							href={`/admin/editUser/${userObj[0]}`}
 							className="w-2/4 flex items-center justify-between gap-5 bg-[var(--secondary-button)] p-5 rounded text-lg cursor-pointer"
 						>
-							<p>
-								{userObj[1].lname}, {userObj[1].fname}
-							</p>
+							<div className="flex items-center gap-2">
+								<FontAwesomeIcon
+									icon={
+										userObj[1].isAdmin ? faShield : faUser
+									}
+								/>
+								<p>
+									{userObj[1].lname}, {userObj[1].fname}
+								</p>
+							</div>
+
 							<FontAwesomeIcon icon={faAngleRight} />
 						</Link>
 					);

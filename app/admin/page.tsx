@@ -17,6 +17,8 @@ export default function Home() {
 	const router = useRouter();
 	const [user, setUser] = useState<User>();
 	const [initializing, setInitializing] = useState(true);
+	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] =
+		useState<boolean>(false);
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -25,8 +27,10 @@ export default function Home() {
 				get(ref(db, `userData/${user.uid}`))
 					.then((snapshot) => {
 						const data = snapshot.val();
-						if (data.isAdmin == "false") {
+						if (data?.isAdmin === false) {
 							return router.push("/");
+						} else {
+							setIsLoggedInUserAdmin(true);
 						}
 						setInitializing(false);
 					})
@@ -46,9 +50,9 @@ export default function Home() {
 	return initializing ? (
 		<Loading />
 	) : (
-		<main className="max-w-screen min-h-screen bg-[var(--secondary)] flex flex-col">
-			<Navbar user={user} />
-			<div className="w-full pl-96 pr-96 pt-16 flex items-center flex-col gap-2">
+		<main className="max-w-screen min-h-screen items-center bg-[var(--secondary)] flex flex-col">
+			<Navbar user={user} isAdmin={isLoggedInUserAdmin} />
+			<div className="w-1/2 pt-16 flex items-center flex-col gap-2">
 				<h1 className="text-2xl w-3/4 mb-5">
 					Administrator handlinger
 				</h1>
@@ -56,7 +60,7 @@ export default function Home() {
 					href="/admin/addUser"
 					className="w-3/4 flex items-center justify-center gap-5 bg-[var(--secondary-button)] p-5 rounded text-lg"
 				>
-					<button onClick={() => {}}>
+					<button className="w-full flex justify-evenly items-center">
 						Opprette nye brukere
 						<FontAwesomeIcon icon={faAngleRight} />
 					</button>
@@ -65,7 +69,7 @@ export default function Home() {
 					href="/admin/editUser"
 					className="w-3/4 flex items-center justify-center gap-5 bg-[var(--secondary-button)] p-5 rounded text-lg"
 				>
-					<button onClick={() => {}}>
+					<button className="w-full flex justify-evenly items-center">
 						Endre eksisterende brukere
 						<FontAwesomeIcon icon={faAngleRight} />
 					</button>

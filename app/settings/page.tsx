@@ -14,7 +14,6 @@ import {
 import { auth, db } from "../libs/firebase";
 import Loading from "../loading";
 import Navbar from "../components/Navbar";
-import Back from "../components/Back";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faAnchor,
@@ -29,7 +28,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { get, ref, set } from "firebase/database";
 import { toast } from "react-hot-toast";
-import MenuItem from "@mui/material/MenuItem";
 
 export default function Home() {
 	const router = useRouter();
@@ -53,6 +51,8 @@ export default function Home() {
 	const [city, setCity] = useState("");
 	const [zip, setZip] = useState("");
 	const [boatplaceUsage, setBoatplaceUsage] = useState<any>();
+	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] =
+		useState<boolean>(false);
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -62,13 +62,14 @@ export default function Home() {
 					.then((snapshot) => {
 						const data = snapshot.val();
 						setUserData(data);
-						setFname(data.fname);
-						setLname(data.lname);
-						setAddress(data.address);
-						setBoatplace(data.boatplace);
-						setCity(data.city);
-						setZip(data.zip);
-						setBoatplaceUsage(data.boatplaceUsage);
+						setFname(data?.fname);
+						setLname(data?.lname);
+						setAddress(data?.address);
+						setBoatplace(data?.boatplace);
+						setCity(data?.city);
+						setZip(data?.zip);
+						setBoatplaceUsage(data?.boatplaceUsage);
+						setIsLoggedInUserAdmin(data?.isAdmin);
 						setInitializing(false);
 					})
 					.catch((error) => {
@@ -87,9 +88,9 @@ export default function Home() {
 	return initializing ? (
 		<Loading />
 	) : (
-		<main className="max-w-screen min-h-screen bg-[var(--secondary)] flex flex-col">
-			<Navbar user={user} />
-			<div className="w-full pl-96 pr-96 pt-16 flex items-center flex-col gap-2 mb-20">
+		<main className="max-w-screen min-h-screen items-center bg-[var(--secondary)] flex flex-col">
+			<Navbar user={user} isAdmin={isLoggedInUserAdmin} />
+			<div className="w-2/3 pt-16 flex items-center flex-col gap-2 mb-20">
 				<div className="w-2/4 flex items-center gap-2">
 					<Avatar
 						src={user?.photoURL ? user.photoURL : ""}

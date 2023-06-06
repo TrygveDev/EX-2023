@@ -129,7 +129,7 @@ export default function Signup() {
 										displayName: fname,
 									}).then(() => {
 										set(ref(db, `userData/${user.uid}/`), {
-											isAdmin: "false",
+											isAdmin: false,
 											fname: fname,
 											lname: lname,
 											address: "",

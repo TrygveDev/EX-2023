@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
-import { auth } from "./libs/firebase";
+import { auth, db } from "./libs/firebase";
 import Loading from "./loading";
 import Navbar from "./components/Navbar";
 import hero from "./assets/hero.jpg";
@@ -11,17 +11,27 @@ import fb from "./assets/fb.jpg";
 import insta from "./assets/insta.jpg";
 import twitter from "./assets/twitter.jpg";
 import Image from "next/image";
+import { get, ref } from "firebase/database";
 
 export default function Home() {
 	const router = useRouter();
 	const [user, setUser] = useState<User>();
 	const [initializing, setInitializing] = useState(true);
-	const [boatPlaceUsage, setBoatPlaceUsage] = useState([]);
+	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] = useState(false);
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
 				setUser(user);
+				get(ref(db, `userData/${user.uid}`)).then((snapshop) => {
+					const data = snapshop.val();
+					if (data?.isAdmin === false) {
+						setIsLoggedInUserAdmin(false);
+						return router.push("/");
+					} else {
+						setIsLoggedInUserAdmin(true);
+					}
+				});
 				setInitializing(false);
 			} else {
 				router.push("/auth");
@@ -32,9 +42,9 @@ export default function Home() {
 	return initializing ? (
 		<Loading />
 	) : (
-		<main className="max-w-screen min-h-screen bg-[var(--secondary)] flex flex-col mb-20">
-			<Navbar user={user} />
-			<div className="w-full pl-96 pr-96 pt-16">
+		<main className="max-w-screen min-h-screen items-center bg-[var(--secondary)] flex flex-col mb-20">
+			<Navbar user={user} isAdmin={isLoggedInUserAdmin} />
+			<div className="w-1/2 pt-16">
 				<div className="flex flex-col items-center gap-5">
 					<div className="w-full h-72 rounded-xl drop-shadow-xl overflow-hidden flex items-end">
 						<Image src={hero} alt="" />

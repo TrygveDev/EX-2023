@@ -38,12 +38,9 @@ export default function Home() {
 	const [password, setPassword] = useState("");
 	const [fname, setFname] = useState("");
 	const [lname, setLname] = useState("");
-	const [address, setAddress] = useState("");
-	const [boatplace, setBoatplace] = useState("");
-	const [city, setCity] = useState("");
-	const [zip, setZip] = useState("");
-	const [boatplaceUsage, setBoatplaceUsage] = useState<any>();
-	const [isAdmin, setIsAdmin] = useState<any>(false);
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
+	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] =
+		useState<boolean>(false);
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -52,22 +49,13 @@ export default function Home() {
 				get(ref(db, `userData/${user.uid}`)).then((snapshop) => {
 					const data = snapshop.val();
 					if (data?.isAdmin == "false") {
+						setIsLoggedInUserAdmin(false);
 						return router.push("/");
+					} else {
+						setIsLoggedInUserAdmin(true);
+						setInitializing(false);
 					}
 				});
-				get(ref(db, `userData`))
-					.then((snapshot) => {
-						const data = snapshot.val();
-						setUserData(data);
-						setInitializing(false);
-					})
-					.catch((error) => {
-						console.log(error);
-						toast.error(
-							"Whoops! En feil har skjedd. Prøv igjen senere.",
-							{ duration: 5000 }
-						);
-					});
 			} else {
 				router.push("/auth");
 			}
@@ -78,13 +66,11 @@ export default function Home() {
 		<Loading />
 	) : (
 		<main className="max-w-screen min-h-screen bg-[var(--secondary)] flex flex-col mb-20">
-			<Navbar user={user} />
-			<div className="w-full pl-96 pr-96 pt-16 flex items-center flex-col gap-2">
+			<Navbar user={user} isAdmin={isLoggedInUserAdmin} />
+			<div className="w-full pt-16 flex items-center flex-col gap-2">
 				<div className="w-2/4 flex gap-5">
 					<BackArrow />
-					<h1 className="text-2xl w-2/4 mb-5">
-						Opprett en ny bruker
-					</h1>
+					<h1 className="text-2xl mb-5">Opprett en ny bruker</h1>
 				</div>
 
 				<div className="w-2/4 flex flex-col gap-4">
@@ -135,69 +121,15 @@ export default function Home() {
 				</div>
 				<div className="w-2/4 flex flex-col gap-2">
 					<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
-						<FontAwesomeIcon icon={faShip} size="lg" />
-						<input
-							className="bg-transparent w-full focus:outline-none"
-							maxLength={3}
-							type="number"
-							placeholder="Båtplass"
-							disabled={loading}
-							onChange={(e) => setBoatplace(e.target.value)}
-						></input>
-					</div>
-					<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
-						<FontAwesomeIcon icon={faHome} size="lg" />
-						<input
-							className="bg-transparent w-full focus:outline-none"
-							maxLength={30}
-							placeholder="Adresse"
-							disabled={loading}
-							onChange={(e) => setAddress(e.target.value)}
-						></input>
-					</div>
-					<div className="flex gap-2">
-						<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
-							<FontAwesomeIcon icon={faLocationDot} size="lg" />
-							<input
-								className="bg-transparent w-full focus:outline-none"
-								maxLength={4}
-								placeholder="Postkode"
-								disabled={loading}
-								onChange={(e) => setZip(e.target.value)}
-							></input>
-						</div>
-						<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
-							<FontAwesomeIcon icon={faMapLocation} size="lg" />
-							<input
-								className="bg-transparent w-full focus:outline-none"
-								maxLength={30}
-								placeholder="Poststed"
-								disabled={loading}
-								onChange={(e) => setCity(e.target.value)}
-							></input>
-						</div>
-					</div>
-					<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
-						<FontAwesomeIcon icon={faAnchor} size="lg" />
-						<input
-							className="bg-transparent w-full focus:outline-none"
-							maxLength={100}
-							placeholder="Uker du skal bruke båtplassen"
-							disabled={loading}
-							onChange={(e) => setBoatplaceUsage(e.target.value)}
-						></input>
-					</div>
-					<p className="text-gray-500">
-						Skriv uker separert med komma, eks: 1, 2, 3
-					</p>
-					<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
 						<FontAwesomeIcon icon={faShield} size="lg" />
+						<p className="w-3/5">Administrator bruker?</p>
 						<input
-							className="bg-transparent w-full focus:outline-none"
-							maxLength={5}
-							placeholder="Er brukeren en administrator? (true/false)"
+							className="bg-transparent w-8 h-8 focus:outline-none"
+							type="checkbox"
 							disabled={loading}
-							onChange={(e) => setIsAdmin(e.target.value)}
+							onChange={(e) => {
+								setIsAdmin(e.target.checked);
+							}}
 						></input>
 					</div>
 				</div>
@@ -228,53 +160,9 @@ export default function Home() {
 								);
 							}
 
-							if (boatplace.length > 3) {
+							if (isAdmin !== true && isAdmin !== false) {
 								setLoading(false);
-								return toast.error(
-									"Båtplassen din kan ikke være over 3 siffer!",
-									{ duration: 5000 }
-								);
-							}
-
-							if (address.length > 30) {
-								setLoading(false);
-								return toast.error(
-									"Adressen din kan ikke være over 30 bokstaver!",
-									{ duration: 5000 }
-								);
-							}
-
-							if (zip.length > 4) {
-								setLoading(false);
-								return toast.error(
-									"Postkoden din må være 4 siffer!",
-									{ duration: 5000 }
-								);
-							}
-
-							if (city.length > 30) {
-								setLoading(false);
-								return toast.error(
-									"Poststedet ditt kan ikke være over 30 bokstaver!",
-									{ duration: 5000 }
-								);
-							}
-							const regex = /^\d+(,\s*\d+)*$/;
-							if (boatplaceUsage) {
-								if (
-									boatplaceUsage.length > 100 ||
-									!regex.test(boatplaceUsage)
-								) {
-									setLoading(false);
-									return toast.error(
-										"Ukene du skal bruke båtplassen din kan ikke være over 100 bokstaver eller inneholde spesielle tegn!",
-										{ duration: 5000 }
-									);
-								}
-							}
-
-							if (isAdmin !== "true" && isAdmin !== "false") {
-								setLoading(false);
+								console.log(isAdmin);
 								return toast.error(
 									"Er brukeren en administrator? (true/false)",
 									{ duration: 5000 }
@@ -295,13 +183,18 @@ export default function Home() {
 											isAdmin: isAdmin,
 											fname: fname,
 											lname: lname,
-											address: address,
-											zip: zip,
-											city: city,
-											boatplace: boatplace,
-											boatplaceUsage: boatplaceUsage,
+											address: "",
+											zip: "",
+											city: "",
+											boatplace: "",
+											boatplaceUsage: "",
 										})
 											.then(() => {
+												setInitializing(true);
+												toast.success(
+													"Bruker opprettet! Logget inn automatisk. Fullfør oppsett i instillinger!",
+													{ duration: 8000 }
+												);
 												router.push("/settings");
 												setLoading(false);
 											})

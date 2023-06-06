@@ -1,39 +1,16 @@
 import { faShip } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar } from "@mui/material";
-import { User, onAuthStateChanged } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import { User } from "firebase/auth";
+import React from "react";
 import Link from "next/link";
-import { auth, db } from "../libs/firebase";
-import { get, ref } from "firebase/database";
-import { toast } from "react-hot-toast";
 
 type Props = {
 	user: User;
+	isAdmin: boolean;
 };
 
 const Navbar = (props: Props) => {
-	const [isAdmin, setIsAdmin] = useState<any>(false);
-
-	useEffect(() => {
-		onAuthStateChanged(auth, (user) => {
-			if (user) {
-				get(ref(db, `userData/${user.uid}`))
-					.then((snapshot) => {
-						const data = snapshot.val();
-						if (data.isAdmin == "true") setIsAdmin(true);
-					})
-					.catch((error) => {
-						console.log(error);
-						toast.error(
-							"Whoops! En feil har skjedd. Prøv igjen senere.",
-							{ duration: 5000 }
-						);
-					});
-			}
-		});
-	}, []);
-
 	return (
 		<div className="w-full h-20 bg-[var(--primary-button)]">
 			<div className="w-full h-full flex flex-row justify-evenly items-center">
@@ -48,7 +25,7 @@ const Navbar = (props: Props) => {
 					<Link href="/">
 						<p>Hjem</p>
 					</Link>
-					{isAdmin == true && <Link href="/admin">Admin</Link>}
+					{props.isAdmin === true && <Link href="/admin">Admin</Link>}
 					<Link href="/settings">
 						<Avatar
 							className="cursor-pointer border-2 border-[var(--secondary)]"
