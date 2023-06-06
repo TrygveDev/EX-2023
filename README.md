@@ -1,34 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Medlemsregister - Bølger og skvulp
 
-## Getting Started
+Dette repositoryet inneholder kildekoden for medlemsregisteret til båtforeningen "Bølger og skvulp". Medlemsregisteret er en nettapplikasjon som gir båtforeningen muligheten til å administrere medlemsinformasjon og båtplasser for sommersesongen 2023.
 
-First, run the development server:
+## Funksjonelle krav
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- Registrering av medlemmer: Foreningen kan legge til nye medlemmer i registeret ved å fylle inn informasjon som navn, adresse, postnummer, poststed og båtplass.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Endring av medlemsinformasjon: Både administratorer og medlemmene selv kan endre sin egen informasjon. Administratorer har også tilgang til å endre informasjonen til alle medlemmer.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Ukeplanlegging: Hvert medlem kan angi hvilke uker de ønsker å benytte sin egen båtplass i løpet av sommersesongen 2023.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Brukeradministrasjon: Administratorer har muligheten til å opprette nye administratorbrukere og legge til nye medlemmer i systemet. Medlemmer kan opprette sin egen bruker dersom de ikke allerede er registrert.
 
-## Learn More
+- Sikkerhet og tilgangskontroll: Hver bruker har kun tilgang til sin egen informasjon. Administratorer har tilgang til og mulighet til å endre all informasjon.
 
-To learn more about Next.js, take a look at the following resources:
+## Teknologier
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- NextJS
+- Firebase
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Lisens
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Dette prosjektet er lisensiert under MIT-lisensen. Se `LICENSE`-filen for mer informasjon.
