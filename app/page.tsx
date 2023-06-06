@@ -64,21 +64,27 @@ export default function Home() {
 				<div className="w-full flex flex-col items-center justify-center mt-28 mb-16">
 					<h1 className="m-2">Sjekk ut våre sosiale medier!</h1>
 					<div className="w-1/3 flex justify-center items-center gap-8">
-						<Image
-							src={fb}
-							alt=""
-							className="w-10 h-10 rounded-full drop-shadow-xl cursor-pointer"
-						/>
-						<Image
-							src={insta}
-							alt=""
-							className="w-10 h-10 rounded-full drop-shadow-xl cursor-pointer"
-						/>
-						<Image
-							src={twitter}
-							alt=""
-							className="w-10 h-10 rounded-full drop-shadow-xl cursor-pointer"
-						/>
+						<a href="https://facebook.com/" target="_blank">
+							<Image
+								src={fb}
+								alt=""
+								className="w-10 h-10 rounded-full drop-shadow-xl cursor-pointer"
+							/>
+						</a>
+						<a href="https://instagram.com/" target="_blank">
+							<Image
+								src={insta}
+								alt=""
+								className="w-10 h-10 rounded-full drop-shadow-xl cursor-pointer"
+							/>
+						</a>
+						<a href="https://twitter.com/" target="_blank">
+							<Image
+								src={twitter}
+								alt=""
+								className="w-10 h-10 rounded-full drop-shadow-xl cursor-pointer"
+							/>
+						</a>
 					</div>
 				</div>
 				<div className="flex flex-row gap-4">

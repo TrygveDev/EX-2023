@@ -48,7 +48,7 @@ export default function Home() {
 				setUser(user);
 				get(ref(db, `userData/${user.uid}`)).then((snapshop) => {
 					const data = snapshop.val();
-					if (data?.isAdmin == "false") {
+					if (data?.isAdmin === false) {
 						setIsLoggedInUserAdmin(false);
 						return router.push("/");
 					} else {

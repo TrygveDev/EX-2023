@@ -113,6 +113,7 @@ export default function Home({ params }: any) {
 					<Avatar
 						src={user?.photoURL ? user.photoURL : ""}
 						className="w-32 h-32"
+						sx={{ width: 128, height: 128 }}
 					/>
 					<div className="w-full flex flex-col gap-2">
 						<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">

@@ -51,8 +51,7 @@ export default function Home() {
 	const [city, setCity] = useState("");
 	const [zip, setZip] = useState("");
 	const [boatplaceUsage, setBoatplaceUsage] = useState<any>();
-	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] =
-		useState<boolean>(false);
+	const [isLoggedInUserAdmin, setIsLoggedInUserAdmin] = useState<boolean>();
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -95,6 +94,7 @@ export default function Home() {
 					<Avatar
 						src={user?.photoURL ? user.photoURL : ""}
 						className="w-32 h-32"
+						sx={{ width: 128, height: 128 }}
 					/>
 					<div className="w-full flex flex-col gap-2">
 						<div className="w-full flex items-center gap-3 bg-[var(--secondary-button)] p-5 rounded text-lg">
@@ -268,6 +268,7 @@ export default function Home() {
 										city: city,
 										boatplace: boatplace,
 										boatplaceUsage: boatplaceUsage,
+										isAdmin: isLoggedInUserAdmin,
 									})
 										.then(() => {
 											setLoading(false);
